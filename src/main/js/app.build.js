@@ -9,7 +9,7 @@ requirejs.config({
     
     modules: [
         {
-            name: "mytest"
+            name: "pbm-appui"
         }
     ]
 });

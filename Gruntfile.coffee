@@ -155,5 +155,6 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-wiredep"
 
 	# Default task.
-	grunt.registerTask "default", ["clean:dist", "jshint", "coffeelint", "coffee", "concat", "clean:coffee", "uglify", "copy", "bower", "wiredep" ]
+	grunt.registerTask "build", ["clean:dist", "jshint", "coffeelint", "coffee", "concat", "clean:coffee", "uglify", "copy", "bower", "wiredep" ]
 	grunt.registerTask "update", ["clean:repo", "bower-install-simple:prod"]
+	grunt.registerTask "default", ["clean", "update", "build"]

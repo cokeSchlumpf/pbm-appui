@@ -1,15 +1,15 @@
 {
-  "name": "mytest",
+  "name": "pbm-appui",
   "version": "0.1.0",
   "description": "The best jQuery plugin ever.",
   "author": {
     "name": "Michael Wellner",
-    "email": "michael.wellner@de.ibm.com",
-    "organization": "IBM GBS GmbH"
+    "email": "info@michaelwellner.de",
+    "organization": "Pretzel & Beer Design Munich"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/michael/test.git"
+    "url": "git://github.com/cokeSchlumpf/pbm-appui"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
@@ -25,8 +25,5 @@
     "grunt-contrib-watch": "~0.4.0",
     "grunt-contrib-clean": "~0.4.0",
     "grunt-wiredep": "~2.0.0"
-  },
-  "dependencies": {
-    "wiredep": "^2.2.2"
   }
 }
