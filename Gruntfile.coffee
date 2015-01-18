@@ -5,6 +5,7 @@ module.exports = (grunt) ->
 		test: "src/test/"
 		libs: "dist/js/lib/"
 		dist: "dist/"
+		repo: "repo/"
 		
 	resSrc =
 		main: "#{src.main}/resources/"
@@ -46,7 +47,7 @@ module.exports = (grunt) ->
 		# Manage dependencies with bower.
 		"bower-install-simple":
 			options:
-				directory: src.libs
+				directory: src.repo
 			prod:
 				options:
 					production: true
@@ -60,7 +61,8 @@ module.exports = (grunt) ->
 		
 		# Specify directories to clean.
 		clean:
-			files: [src.dist]
+			dist: [src.dist]
+			repo: [src.repo]
 			
 		coffee:
 			compile:
@@ -79,13 +81,19 @@ module.exports = (grunt) ->
 				cwd: htmlSrc.main
 				src: ["**"]
 				dest: htmlSrc.dist
-				
+		
 			resources:
 				expand: true
 				cwd: resSrc.main
 				src: ["**"]
 				dest: resSrc.dist
-				
+		
+			libs:
+				dot: true
+				expand: true
+				cwd: src.repo
+				src: ["**"]
+				dest: src.libs
 			
 		# Configuration for concatunation: Put the file header to each file.
 		concat:
@@ -125,8 +133,8 @@ module.exports = (grunt) ->
 				
 		wiredep: 
 			target:
-                src: "#{src.dist}**/*.html",
-                ignorePath: src.dist
+				src: "#{src.dist}**/*.html",
+				ignorePath: src.dist
 
 
 	# Load external Grunt task plugins.
@@ -142,5 +150,6 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-wiredep"
 
 	# Default task.
-	grunt.registerTask "default", ["clean", "jshint", "concat", "uglify", "coffeelint", "coffee", "copy", "bower-install", "bower", "wiredep" ]
-	grunt.registerTask "bower-install", ["bower-install-simple:prod"]
+	grunt.registerTask "default", ["clean:dist", "jshint", "concat", "uglify", "coffeelint", "coffee", "copy", "bower", "wiredep" ]
+	grunt.registerTask "update", ["clean:repo", "bower-install-simple:prod"]
+	grunt.registerTask "cleanAll", ["clean"]
