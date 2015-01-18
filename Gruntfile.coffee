@@ -63,14 +63,17 @@ module.exports = (grunt) ->
 		clean:
 			dist: [src.dist]
 			repo: [src.repo]
+			coffee: ["#{jsSrc.main}coffee-compiled.js"]
 			
+		# Compile CoffeeScripts to temporary JS File.
 		coffee:
 			compile:
-				files:
-					"dist/js/test.js": [ "#{cofSrc.main}*.coffee" ]
+				src: [ "#{cofSrc.main}*.coffee" ]
+				dest: "#{jsSrc.main}coffee-compiled.js"
 				options:
 				  bare: true
-					
+		
+		# Check code quality for CoffeeScripts
 		coffeelint:
 			sources: [ "#{cofSrc.main}*.coffee" ]
 			
@@ -101,8 +104,9 @@ module.exports = (grunt) ->
 				banner: "<%= banner %>"
 				stripBanners: true
 				
+			# All JS Files are merged into one output file, except for app.build.js
 			dist:
-				src: ["#{jsSrc.main}<%= pkg.name %>.js"]
+				src: ["#{jsSrc.main}**.js", "!#{jsSrc.main}app.build.js"]
 				dest: "#{jsSrc.dist}<%= pkg.name %>.js"
 				
 			main:
@@ -131,10 +135,11 @@ module.exports = (grunt) ->
 				src: "<%= concat.dist.dest %>"
 				dest: "#{jsSrc.dist}<%= pkg.name %>.min.js"
 				
+		# Inject CSS/ JS imports to HTML files.
 		wiredep: 
 			target:
 				src: "#{src.dist}**/*.html",
-				ignorePath: src.dist
+				#ignorePath: src.dist
 
 
 	# Load external Grunt task plugins.
@@ -150,6 +155,6 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-wiredep"
 
 	# Default task.
-	grunt.registerTask "default", ["clean:dist", "jshint", "concat", "uglify", "coffeelint", "coffee", "copy", "bower", "wiredep" ]
+	grunt.registerTask "default", ["clean:dist", "jshint", "coffeelint", "coffee", "concat", "clean:coffee", "uglify", "copy", "bower", "wiredep" ]
 	grunt.registerTask "update", ["clean:repo", "bower-install-simple:prod"]
 	grunt.registerTask "cleanAll", ["clean"]
