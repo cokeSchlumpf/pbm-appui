@@ -157,4 +157,3 @@ module.exports = (grunt) ->
 	# Default task.
 	grunt.registerTask "default", ["clean:dist", "jshint", "coffeelint", "coffee", "concat", "clean:coffee", "uglify", "copy", "bower", "wiredep" ]
 	grunt.registerTask "update", ["clean:repo", "bower-install-simple:prod"]
-	grunt.registerTask "cleanAll", ["clean"]
