@@ -63,15 +63,18 @@ module.exports = (grunt) ->
 		clean:
 			dist: [src.dist]
 			repo: [src.repo]
-			coffee: ["#{jsSrc.main}coffee-compiled.js"]
+			coffee: ["#{jsSrc.main}*-compiled.js"]
 			
 		# Compile CoffeeScripts to temporary JS File.
-		coffee:
+		coffee:				  
 			compile:
-				src: [ "#{cofSrc.main}*.coffee" ]
-				dest: "#{jsSrc.main}coffee-compiled.js"
 				options:
-				  bare: true
+					bare: true
+					
+				files: [
+					{ src: [ "#{cofSrc.main}example.coffee" ], dest: "#{jsSrc.main}example-compiled.js" },
+					{ src: [ "#{cofSrc.main}*.coffee",  "!#{cofSrc.main}example.coffee"], dest: "#{jsSrc.main}coffee-compiled.js" }
+				]
 		
 		# Check code quality for CoffeeScripts
 		coffeelint:
@@ -106,8 +109,12 @@ module.exports = (grunt) ->
 				
 			# All JS Files are merged into one output file, except for app.build.js
 			dist:
-				src: ["#{jsSrc.main}**.js", "!#{jsSrc.main}app.build.js"]
+				src: ["#{jsSrc.main}**.js", "!#{jsSrc.main}app.build.js", "!#{jsSrc.main}example-compiled.js"]
 				dest: "#{jsSrc.dist}<%= pkg.name %>.js"
+				
+			example:
+				src: ["#{jsSrc.main}example-compiled.js"]
+				dest: "#{jsSrc.dist}example.js"
 				
 			main:
 				src: ["#{jsSrc.main}app.build.js"]
