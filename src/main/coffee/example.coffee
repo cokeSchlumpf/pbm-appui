@@ -1,3 +1,3 @@
-require ["jquery", "requirejs-text!../resources/message.txt"], ($,message) ->
+require ["jquery", "pbm-appui"], ($) ->
 
-  $('#content').append('<h2>VFC! ' + message + '</h2>')
+  $("#content").appui()
