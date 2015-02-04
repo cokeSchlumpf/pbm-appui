@@ -6,10 +6,21 @@
   <!-- endbower -->
   <script src="js/lib/requirejs/require.js" data-main="js/example.js"></script>
   <script src="js/app.build.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="css/pbm-appui.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css"></style>
 </head>
 <body>
-  <div id="content">
-	  
-  </div>
+  <application id="testapp" layout="border">
+		<panel position="top" class="test">TOP</panel>
+		<panel position="right">LEFT</panel>
+		<panel position="center" layout="border" style="background-color: #00ff00;">
+		  <panel position="top">CENTER-TOP</panel>
+		  <panel position="left">CENTER-LEFT</panel>
+		  <panel position="center">CENTER CENTER</panel>
+		</panel>
+		<panel position="bottom" size="200">BOTTOM</panel>
+		<bla></bla>
+  </application>
 </body>
 </html>

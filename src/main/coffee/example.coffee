@@ -1,3 +1,3 @@
 require ["jquery", "pbm-appui"], ($) ->
 
-  $("#content").appui()
+  $("body").application()

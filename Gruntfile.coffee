@@ -17,6 +17,10 @@ module.exports = (grunt) ->
 		test: "#{src.test}js/"
 		dist: "#{src.dist}js/"
 		
+	cssSrc =
+		main: "#{src.main}less/"
+		dist: "#{src.dist}css/"
+		
 	htmlSrc =
 		main: "#{src.main}html/"
 		dist: "#{src.dist}"
@@ -78,6 +82,8 @@ module.exports = (grunt) ->
 		
 		# Check code quality for CoffeeScripts
 		coffeelint:
+		  options:
+		    max_line_length: 200
 			sources: [ "#{cofSrc.main}*.coffee" ]
 			
 		# Files to be copied during build.
@@ -133,6 +139,18 @@ module.exports = (grunt) ->
 				browser: true
 				boss: true
 				
+		# Configuration of LESS compilation
+		less:
+			options:
+				banner: "<%= banner %>"
+				
+			src:
+        expand: true
+        cwd: cssSrc.main
+        src: "*.less"
+        ext: ".css"
+        dest: cssSrc.dist
+				
 		# Configurations for uglify.
 		uglify:
 			options:
@@ -158,10 +176,11 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-contrib-copy"
 	grunt.loadNpmTasks "grunt-contrib-concat"
 	grunt.loadNpmTasks "grunt-contrib-jshint"
+	grunt.loadNpmTasks "grunt-contrib-less"
 	grunt.loadNpmTasks "grunt-contrib-uglify"
 	grunt.loadNpmTasks "grunt-wiredep"
 
 	# Default task.
-	grunt.registerTask "build", ["clean:dist", "jshint", "coffeelint", "coffee", "concat", "clean:coffee", "uglify", "copy", "bower", "wiredep" ]
+	grunt.registerTask "build", ["clean:dist", "jshint", "coffeelint", "coffee", "concat", "clean:coffee", "uglify", "copy", "less", "bower", "wiredep" ]
 	grunt.registerTask "update", ["clean:repo", "bower-install-simple:prod"]
 	grunt.registerTask "default", ["clean", "update", "build"]
