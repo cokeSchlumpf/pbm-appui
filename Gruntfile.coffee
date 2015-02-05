@@ -143,6 +143,7 @@ module.exports = (grunt) ->
 		less:
 			options:
 				banner: "<%= banner %>"
+				compress: true
 				
 			src:
         expand: true
