@@ -34,10 +34,10 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
     _constants:
       attributes:
         CLASSNAME:        "classname"
-        JUSTIFYCONTENT:   "justifyContent"
+        JUSTIFYCONTENT:   "justifycontent"
         LAYOUT:           "layout"
         POSITION:         "position"
-        REPLACEWITH:      "replaceWith"
+        REPLACEWITH:      "replacewith"
         SIZE:             "size"
         WEIGHT:           "weight"
       
@@ -60,7 +60,7 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
     ###
     _cleanAttributes: () ->  
       result = [ ]
-      result.push(AppUI._constants.attributes[key]) for key in Object.keys(AppUI._constants.attributes)
+      result.push(AppUI._constants.attributes[key].toLowerCase()) for key in Object.keys(AppUI._constants.attributes)
       result
     
     ###
@@ -117,7 +117,7 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
         ###
         _simple: (directionCSS) ->
           transform: (container, attributes) ->
-            justifyContent = $(container).attr(AppUI._constants.attributes.JUSTIFYCONTENT)
+            justifyContent = attributes[AppUI._constants.attributes.JUSTIFYCONTENT]
             
             $(container).addClass(directionCSS).children().each((index, element) ->
               AppUI._addSizing($(element), if justifycContent? then { size: "auto" } else { weight: 1 })
@@ -148,7 +148,7 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
         $(newElement).html($(element).html())
         
       # Add all attributes to new element except for application layout specific attributes ...
-      $(element.attributes).each((index, element) -> if (element.name not in self._cleanAttributes) then $(newElement).attr(element.name, element.value))
+      $(element.attributes).each((index, element) -> if (element.name.toLowerCase() not in self._cleanAttributes()) then $(newElement).attr(element.name, element.value))
       $(newElement).addClass(classname)
       
       # Replace old element with valid/ new HTML5 element.
@@ -168,7 +168,7 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
         newContainer  = self._replaceContainer(container)
         
         attributes = {}
-        attributes[attr.name] = attr.value for attr in container.attributes
+        attributes[attr.name.toLowerCase()] = attr.value for attr in container.attributes
           
         layoutname = attributes[self._constants.attributes.LAYOUT]
         layout = self.options.layouts[layoutname]
@@ -257,7 +257,6 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
         $(middle).append(right)
         AppUI._addSizing(right, { weight: 1 }) 
   })
-  
   
   ###
   #
