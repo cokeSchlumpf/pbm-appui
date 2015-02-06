@@ -11,10 +11,14 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
   ###      
   Option = 
     From: (value) ->
-      isDefined: value?
-      get: value
-      getOrElse: (defaultValue) ->
-        if value? then value else defaultValue
+      if (valze? and value.isDefined? and value.getOrElse?)
+        # Return Option if value is already Option.
+        value
+      else
+        isDefined: value?
+        get: value
+        getOrElse: (defaultValue) ->
+          if value? then value else defaultValue
       
     None:
       isDefined: false
@@ -33,6 +37,7 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
     ###
     _constants:
       attributes:
+        ALIGNITEMS:       "alignitems"
         CLASSNAME:        "classname"
         JUSTIFYCONTENT:   "justifycontent"
         LAYOUT:           "layout"
@@ -67,15 +72,22 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
     # Helper function to configure the size of a layout item.
     ###
     _addSizing: (element, standard) ->
+      isVertical = element.parent().hasClass(this._constants.css.VERTICAL)
+      self = this
+      
       setSizeTo = (size) ->
         element.css((if isVertical then "height" else "width"), size + (if not isNaN(size) then "px" else ""))
         
-      isVertical = element.parent().hasClass(this._constants.css.VERTICAL)
+      containerDefaultSize = () ->
+        container = self.options.container[element.prop("tagName").toLowerCase()]
+        if container? then Option.From(container.size) else Option.None
   
       if element.attr(this._constants.attributes.SIZE)?
         setSizeTo element.attr(this._constants.attributes.SIZE)
       else if standard.size?
         setSizeTo standard.size
+      else if containerDefaultSize().isDefined
+        setSizeTo containerDefaultSize().get
       else
         classname = this._constants.css.ITEM_FIXED(Option.From($(element).attr(this._constants.attributes.WEIGHT)).getOrElse(standard.weight))
         element.addClass(classname)
@@ -118,12 +130,15 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
         _simple: (directionCSS) ->
           transform: (container, attributes) ->
             justifyContent = attributes[AppUI._constants.attributes.JUSTIFYCONTENT]
+            alignitems = attributes[AppUI._constants.attributes.ALIGNITEMS]
             
             $(container).addClass(directionCSS).children().each((index, element) ->
+              console.log(element)
               AppUI._addSizing($(element), if justifycContent? then { size: "auto" } else { weight: 1 })
             )
             
             $(container).addClass("pbm-applayout-justify-#{justifyContent}") if justifyContent?
+            $(container).addClass("pbm-applayout-alignitems-#{alignitems}") if alignitems?
       
     ###
     # Replaces the application xml container element with a valid HTML 5 tag.
@@ -164,19 +179,38 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
     render: (element) -> 
       self = this
       
-      $("> :container", element).each((index, container) ->
-        newContainer  = self._replaceContainer(container)
+      # Set default attributes from options to container
+      $(":container", element).each((index, element) ->
+        defaultAttributes = self.options.container[$(element).prop("tagName").toLowerCase()].defaultAttributes
         
-        attributes = {}
-        attributes[attr.name.toLowerCase()] = attr.value for attr in container.attributes
-          
-        layoutname = attributes[self._constants.attributes.LAYOUT]
-        layout = self.options.layouts[layoutname]
-  
-        if layout? then layout.transform(newContainer, attributes)
-        
-        self.render(newContainer)
+        if defaultAttributes?
+          putAttribute = (key, value) ->
+            
+            if not $(element).attr(key)?
+              console.log("Set #{key} to #{value}.")
+              $(element).attr(key, value)
+            else
+              console.log("Overwritten #{key} by #{$(element).attr(key)}, #{$(element).attr(key)?}")
+
+          putAttribute(key, defaultAttributes[key]) for key in Object.keys(defaultAttributes) 
       )
+      
+      _render = (element) -> 
+        $("> :container", element).each((index, container) ->
+          newContainer  = self._replaceContainer(container)
+          
+          attributes = {}
+          attributes[attr.name.toLowerCase()] = attr.value for attr in container.attributes
+            
+          layoutname = attributes[self._constants.attributes.LAYOUT]
+          layout = self.options.layouts[layoutname]
+    
+          if layout? then layout.transform(newContainer, attributes)
+          
+          _render(newContainer)
+        )
+        
+      _render element
       
     ###
     # Creates a new layout and adds it to the App UI configuration.
@@ -264,19 +298,41 @@ define ["jquery", "jquery", "jquery-ui"], ($, jQuery) ->
   #
   ### 
   AppUI.createContainer("application", {
-    classname:    "application"
-    replaceWith:  "div"
+    classname:          "application"
+    replaceWith:        "div"
+    
+    defaultAttributes:
+      layout:           "border"
   })
    
   AppUI.createContainer("panel", {
-    classname:    "panel"
-    replaceWith:  "div"
+    classname:          "panel"
+    replaceWith:        "div"
+    
+    defaultAttributes:
+      layout:           "vertical"
   })
   
   AppUI.createContainer("titlebar", {        
-    classname:    "titlebar"
-    replaceWith:  "div"
-    size:         Option.From(40)
+    classname:          "titlebar"
+    replaceWith:        "div"
+
+    defaultAttributes:
+      layout:           "horizontal"
+      size:             "20"
+      justifycontent:   "space-between"
+      alignitems:       "center"
+  })
+  
+  AppUI.createContainer("toolbar", {
+    classname:          "toolbar"
+    replaceWith:        "div"
+    
+    defaultAttributes:
+      layout:           "horizontal"
+      size:             "100"
+      justifycontent:   "start"
+      alignitems:       "center"
   })
     
   ###

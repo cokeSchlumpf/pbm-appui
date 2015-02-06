@@ -235,9 +235,15 @@ div.pbm-application {
 
 .pbm-applayout-justify-start { .justify-content(flex-start) }
 .pbm-applayout-justify-end { .justify-content(flex-end) }
-.pbm-applayout-justify-center { .justify-content(flex-center) }
+.pbm-applayout-justify-center { .justify-content(center) }
 .pbm-applayout-justify-space-between { .justify-content(space-between) }
 .pbm-applayout-justify-space-around { .justify-content(space-around) }
+
+.pbm-applayout-alignitems-start { .align-items(@align: flex-start) }
+.pbm-applayout-alignitems-end { .align-items(@align: flex-end) }
+.pbm-applayout-alignitems-center { .align-items(@align: center) }
+.pbm-applayout-alignitems-stretch { .align-items(@align: stretch) }
+.pbm-applayout-alignitems-baseline { .align-items(@align: baseline) }
 
 // --------------------------------------------------
 // Basic Styles
@@ -256,6 +262,21 @@ div.pbm-application {
   font-size: 10pt;
 }
 
+.base() {
+  background-color: @colorBase;
+  color: @colorBaseText;
+}
+
+.main() {
+  background-color: @colorMain;
+  color: @colorMainText;
+}
+
+.secondary() {
+  background-color: @colorSecondary;
+  color: @colorSecondaryText; 
+}
+
 html, body {
   font: 12pt "Open Sans", sans-serif;
   color: @colorBaseText;
@@ -267,6 +288,13 @@ html, body {
 // --------------------------------------------------
 
 // --- Toolbar
-.pbm-toolbar {
+.pbm-titlebar {
   .small();
+  .secondary();
+  padding: 10px 5px;
+}
+
+.pbm-toolbar {
+  .main();
+  padding: 10px 5px;
 }
